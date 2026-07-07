@@ -525,92 +525,62 @@ function deleteCustomItem(itemId) {
 
 // --- Event Listeners Setup ---
 function setupEventListeners() {
-  // Splash Passcode Lock Screen Controllers
+  // Splash Admin Login Modal Controllers
   const btnEnter = document.getElementById('btn-enter-showroom');
-  const splashMain = document.getElementById('splash-main-content');
-  const splashPasscode = document.getElementById('splash-passcode-content');
+  const loginModal = document.getElementById('login-modal');
+  const btnCloseLogin = document.getElementById('btn-close-login');
+  
+  if (btnEnter && loginModal) {
+    btnEnter.addEventListener('click', () => {
+      loginModal.classList.remove('hidden');
+      resetLoginForm();
+    });
+  }
+  
+  if (btnCloseLogin && loginModal) {
+    btnCloseLogin.addEventListener('click', () => {
+      loginModal.classList.add('hidden');
+    });
+  }
+  
+  const loginForm = document.getElementById('admin-login-form');
+  const usernameInput = document.getElementById('admin-username');
+  const passwordInput = document.getElementById('admin-password');
+  const errorMsg = document.getElementById('login-error-msg');
   const welcomeSplash = document.getElementById('welcome-splash');
   
-  const CORRECT_PIN = '2005';
-  let enteredPin = '';
+  function resetLoginForm() {
+    if (loginForm) loginForm.reset();
+    if (errorMsg) errorMsg.classList.add('hidden');
+    if (passwordInput) passwordInput.setAttribute('type', 'password');
+    const btnTogglePass = document.getElementById('btn-toggle-password');
+    if (btnTogglePass) btnTogglePass.textContent = '👁️';
+  }
   
-  const dots = document.querySelectorAll('.passcode-dot');
-  const errorMsg = document.getElementById('passcode-error-msg');
-  const dotsRow = document.getElementById('passcode-dots-row');
-  
-  function updateDots() {
-    dots.forEach((dot, index) => {
-      if (index < enteredPin.length) {
-        dot.classList.add('active');
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const user = usernameInput.value.trim();
+      const pass = passwordInput.value.trim();
+      
+      // Secure Admin Credentials for Kavya Swarnalayam
+      if (user === 'admin' && pass === 'kavyaswarnalayam@2005') {
+        sessionStorage.setItem('kavya_showroom_unlocked', 'true');
+        loginModal.classList.add('hidden');
+        welcomeSplash.classList.add('fade-out');
       } else {
-        dot.classList.remove('active');
+        errorMsg.classList.remove('hidden');
       }
     });
   }
   
-  function resetPasscodeUI() {
-    enteredPin = '';
-    updateDots();
-    errorMsg.classList.add('hidden');
-    dotsRow.classList.remove('shake');
-  }
-  
-  if (btnEnter && splashMain && splashPasscode) {
-    btnEnter.addEventListener('click', () => {
-      splashMain.classList.add('hidden');
-      splashPasscode.classList.remove('hidden');
-      resetPasscodeUI();
-    });
-  }
-  
-  // Numeric keypad button events
-  document.querySelectorAll('.keypad-btn[data-value]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (enteredPin.length < 4) {
-        errorMsg.classList.add('hidden');
-        enteredPin += btn.getAttribute('data-value');
-        updateDots();
-        
-        if (enteredPin.length === 4) {
-          if (enteredPin === CORRECT_PIN) {
-            // Correct PIN -> unlock showroom and save session
-            sessionStorage.setItem('kavya_showroom_unlocked', 'true');
-            welcomeSplash.classList.add('fade-out');
-          } else {
-            // Incorrect PIN -> Shake indicators and alert
-            dotsRow.classList.add('shake');
-            errorMsg.classList.remove('hidden');
-            
-            setTimeout(() => {
-              enteredPin = '';
-              updateDots();
-              dotsRow.classList.remove('shake');
-            }, 600);
-          }
-        }
-      }
-    });
-  });
-  
-  // Keypad Backspace (⌫) event
-  const btnBackspace = document.getElementById('btn-keypad-backspace');
-  if (btnBackspace) {
-    btnBackspace.addEventListener('click', () => {
-      if (enteredPin.length > 0) {
-        enteredPin = enteredPin.slice(0, -1);
-        updateDots();
-        errorMsg.classList.add('hidden');
-      }
-    });
-  }
-  
-  // Keypad Cancel (✕) event
-  const btnCancelPin = document.getElementById('btn-keypad-cancel');
-  if (btnCancelPin) {
-    btnCancelPin.addEventListener('click', () => {
-      splashPasscode.classList.add('hidden');
-      splashMain.classList.remove('hidden');
-      resetPasscodeUI();
+  // Toggle password visibility
+  const btnTogglePass = document.getElementById('btn-toggle-password');
+  if (btnTogglePass && passwordInput) {
+    btnTogglePass.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      btnTogglePass.textContent = type === 'password' ? '👁️' : '🔒';
     });
   }
 
