@@ -1947,6 +1947,26 @@ body {
   min-height: 15px;
 }
 
+/* Stage 1 Intro Panel Styling */
+.splash-intro-panel {
+  padding: 60px 40px !important;
+  border-color: rgba(212, 175, 55, 0.15) !important;
+}
+
+.intro-title {
+  font-size: 3.6rem !important;
+  letter-spacing: 0.22em !important;
+  line-height: 1.2;
+  margin: 15px 0 10px 0 !important;
+}
+
+.intro-subtitle {
+  font-size: 0.9rem !important;
+  letter-spacing: 0.45em !important;
+  color: var(--color-gold) !important;
+}
+
+
 
 
 

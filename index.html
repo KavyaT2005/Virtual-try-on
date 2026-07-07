@@ -17,60 +17,50 @@
     <!-- Welcome Splash Screen Overlay -->
     <div id="welcome-splash" class="welcome-splash">
       
-      <!-- Welcome Screen Content -->
-      <div id="splash-main-content" class="splash-content">
+      <!-- Stage 1: Brand Intro Screen (Visible Initially) -->
+      <div id="splash-intro-content" class="splash-content splash-intro-panel">
         <div class="splash-logo">
-          <span class="splash-logo-sparkle">✦</span>
-          <span class="splash-logo-sparkle main-sparkle">✦</span>
-          <span class="splash-logo-sparkle">✦</span>
+          <span class="splash-logo-sparkle main-sparkle" style="font-size: 3rem; animation: spinSlow 8s linear infinite, glowPulse 2s ease-in-out infinite alternate;">✦</span>
         </div>
-        <h1 class="splash-brand-title">Kavya Swarnalayam</h1>
-        <p class="splash-brand-subtitle">VIRTUAL TRY-ON SHOWROOM</p>
-        
-        <div class="splash-divider"></div>
-        
-        <p class="splash-quote">
-          "Adorn yourself in virtual splendor. Try on the finest necklaces, earrings, and rings of Kavya Swarnalayam virtually."
-        </p>
-        
-        <button id="btn-enter-showroom" class="btn btn-primary btn-enter-showroom">
-          Enter Virtual Showroom
-        </button>
+        <h1 class="splash-brand-title intro-title">Kavya Swarnalayam</h1>
+        <p class="splash-brand-subtitle intro-subtitle">VIRTUAL TRY-ON SHOWROOM</p>
       </div>
 
-      <!-- Admin Login Modal Popup (Initially Hidden) -->
-      <div id="login-modal" class="login-modal-overlay hidden">
-        <div class="login-modal-box">
-          <button type="button" id="btn-close-login" class="login-close-btn" title="Close login modal">✕</button>
-          
-          <div class="splash-logo" style="margin-bottom: 10px;">
-            <span class="splash-logo-sparkle main-sparkle" style="font-size: 1.6rem; animation: glowPulse 2s ease-in-out infinite alternate;">✦</span>
+      <!-- Stage 2: Admin Login Screen (Hidden Initially, Fades In After Delay) -->
+      <div id="splash-login-content" class="splash-content hidden">
+        <div class="splash-logo" style="margin-bottom: 10px;">
+          <span class="splash-logo-sparkle main-sparkle" style="font-size: 1.6rem; animation: glowPulse 2s ease-in-out infinite alternate;">✦</span>
+        </div>
+        
+        <h2 class="login-title">Kavya Swarnalayam</h2>
+        <p class="login-subtitle">VIRTUAL TRY-ON SHOWROOM</p>
+        
+        <div class="splash-divider" style="margin: 15px auto;"></div>
+        
+        <p class="login-instructions" style="font-size: 0.8rem; color: var(--color-text-muted); text-align: center; margin-bottom: 20px;">
+          Authorized Admin Authentication Required
+        </p>
+        
+        <form id="admin-login-form" class="admin-login-form">
+          <div class="input-group">
+            <label for="admin-username">Username</label>
+            <input type="text" id="admin-username" placeholder="Enter admin username..." required class="luxury-input" autocomplete="username">
           </div>
           
-          <h2 class="login-title">Admin Authentication</h2>
-          <p class="login-subtitle">Sign in to activate Kavya Swarnalayam try-on system</p>
+          <div class="input-group">
+            <label for="admin-password">Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="admin-password" placeholder="Enter password..." required class="luxury-input" autocomplete="current-password">
+              <button type="button" id="btn-toggle-password" class="btn-toggle-password" title="Toggle password visibility">👁️</button>
+            </div>
+          </div>
           
-          <form id="admin-login-form" class="admin-login-form">
-            <div class="input-group">
-              <label for="admin-username">Username</label>
-              <input type="text" id="admin-username" placeholder="Enter admin username..." required class="luxury-input" autocomplete="username">
-            </div>
-            
-            <div class="input-group">
-              <label for="admin-password">Password</label>
-              <div class="password-wrapper">
-                <input type="password" id="admin-password" placeholder="Enter password..." required class="luxury-input" autocomplete="current-password">
-                <button type="button" id="btn-toggle-password" class="btn-toggle-password" title="Toggle password visibility">👁️</button>
-              </div>
-            </div>
-            
-            <div id="login-error-msg" class="login-error-msg hidden">Invalid username or password.</div>
-            
-            <button type="submit" id="btn-submit-login" class="btn btn-primary btn-full-width" style="margin-top: 15px;">
-              Authorize & Enter Showroom
-            </button>
-          </form>
-        </div>
+          <div id="login-error-msg" class="login-error-msg hidden">Invalid username or password.</div>
+          
+          <button type="submit" id="btn-submit-login" class="btn btn-primary btn-full-width" style="margin-top: 15px;">
+            Authorize & Enter Showroom
+          </button>
+        </form>
       </div>
 
     </div>

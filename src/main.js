@@ -74,6 +74,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if (sessionStorage.getItem('kavya_showroom_unlocked') === 'true') {
     const welcome = document.getElementById('welcome-splash');
     if (welcome) welcome.classList.add('fade-out');
+  } else {
+    // Run Stage 1 Intro Timer: Transition from Brand name to Admin Login after 2.5 seconds
+    setTimeout(() => {
+      const intro = document.getElementById('splash-intro-content');
+      const login = document.getElementById('splash-login-content');
+      if (intro && login) {
+        intro.classList.add('hidden');
+        login.classList.remove('hidden');
+      }
+    }, 2500);
   }
   
   renderCatalog();
@@ -525,37 +535,11 @@ function deleteCustomItem(itemId) {
 
 // --- Event Listeners Setup ---
 function setupEventListeners() {
-  // Splash Admin Login Modal Controllers
-  const btnEnter = document.getElementById('btn-enter-showroom');
-  const loginModal = document.getElementById('login-modal');
-  const btnCloseLogin = document.getElementById('btn-close-login');
-  
-  if (btnEnter && loginModal) {
-    btnEnter.addEventListener('click', () => {
-      loginModal.classList.remove('hidden');
-      resetLoginForm();
-    });
-  }
-  
-  if (btnCloseLogin && loginModal) {
-    btnCloseLogin.addEventListener('click', () => {
-      loginModal.classList.add('hidden');
-    });
-  }
-  
   const loginForm = document.getElementById('admin-login-form');
   const usernameInput = document.getElementById('admin-username');
   const passwordInput = document.getElementById('admin-password');
   const errorMsg = document.getElementById('login-error-msg');
   const welcomeSplash = document.getElementById('welcome-splash');
-  
-  function resetLoginForm() {
-    if (loginForm) loginForm.reset();
-    if (errorMsg) errorMsg.classList.add('hidden');
-    if (passwordInput) passwordInput.setAttribute('type', 'password');
-    const btnTogglePass = document.getElementById('btn-toggle-password');
-    if (btnTogglePass) btnTogglePass.textContent = '👁️';
-  }
   
   if (loginForm) {
     loginForm.addEventListener('submit', (e) => {
@@ -566,7 +550,6 @@ function setupEventListeners() {
       // Secure Admin Credentials for Kavya Swarnalayam
       if (user === 'admin' && pass === 'kavyaswarnalayam@2005') {
         sessionStorage.setItem('kavya_showroom_unlocked', 'true');
-        loginModal.classList.add('hidden');
         welcomeSplash.classList.add('fade-out');
       } else {
         errorMsg.classList.remove('hidden');
