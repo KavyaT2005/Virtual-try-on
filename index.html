@@ -16,7 +16,9 @@
 
     <!-- Welcome Splash Screen Overlay -->
     <div id="welcome-splash" class="welcome-splash">
-      <div class="splash-content">
+      
+      <!-- Welcome Screen Content -->
+      <div id="splash-main-content" class="splash-content">
         <div class="splash-logo">
           <span class="splash-logo-sparkle">✦</span>
           <span class="splash-logo-sparkle main-sparkle">✦</span>
@@ -35,6 +37,42 @@
           Enter Virtual Showroom
         </button>
       </div>
+
+      <!-- Passcode Panel Content (Hidden Initially) -->
+      <div id="splash-passcode-content" class="splash-content hidden">
+        <div class="splash-logo">
+          <span class="splash-logo-sparkle main-sparkle" style="font-size: 1.6rem; animation: glowPulse 2s ease-in-out infinite alternate;">✦</span>
+        </div>
+        <h2 class="passcode-title">Authorized Access</h2>
+        <p class="passcode-subtitle">Please enter the Kavya Swarnalayam Showroom PIN</p>
+        
+        <!-- Passcode Dot Indicators -->
+        <div class="passcode-dots-row" id="passcode-dots-row">
+          <div class="passcode-dot"></div>
+          <div class="passcode-dot"></div>
+          <div class="passcode-dot"></div>
+          <div class="passcode-dot"></div>
+        </div>
+        
+        <div id="passcode-error-msg" class="passcode-error-msg hidden">Incorrect PIN. Authorized staff only.</div>
+        
+        <!-- Keypad Grid -->
+        <div class="keypad-grid">
+          <button type="button" class="keypad-btn" data-value="1">1</button>
+          <button type="button" class="keypad-btn" data-value="2">2</button>
+          <button type="button" class="keypad-btn" data-value="3">3</button>
+          <button type="button" class="keypad-btn" data-value="4">4</button>
+          <button type="button" class="keypad-btn" data-value="5">5</button>
+          <button type="button" class="keypad-btn" data-value="6">6</button>
+          <button type="button" class="keypad-btn" data-value="7">7</button>
+          <button type="button" class="keypad-btn" data-value="8">8</button>
+          <button type="button" class="keypad-btn" data-value="9">9</button>
+          <button type="button" class="keypad-btn btn-action" id="btn-keypad-cancel">✕</button>
+          <button type="button" class="keypad-btn" data-value="0">0</button>
+          <button type="button" class="keypad-btn btn-action" id="btn-keypad-backspace">⌫</button>
+        </div>
+      </div>
+
     </div>
 
     <div id="app" class="app-container">

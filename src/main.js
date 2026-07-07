@@ -70,6 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
   activeItemId = JEWELRY_ITEMS[0].id;
   updateActiveTryOnSetDOM();
   
+  // Skip welcome splash if already unlocked in this browser session
+  if (sessionStorage.getItem('kavya_showroom_unlocked') === 'true') {
+    const welcome = document.getElementById('welcome-splash');
+    if (welcome) welcome.classList.add('fade-out');
+  }
+  
   renderCatalog();
   setupEventListeners();
   setupSearchAndFilters();
@@ -519,12 +525,92 @@ function deleteCustomItem(itemId) {
 
 // --- Event Listeners Setup ---
 function setupEventListeners() {
-  // Enter Showroom click listener to fade out the splash screen
+  // Splash Passcode Lock Screen Controllers
   const btnEnter = document.getElementById('btn-enter-showroom');
-  const splash = document.getElementById('welcome-splash');
-  if (btnEnter && splash) {
+  const splashMain = document.getElementById('splash-main-content');
+  const splashPasscode = document.getElementById('splash-passcode-content');
+  const welcomeSplash = document.getElementById('welcome-splash');
+  
+  const CORRECT_PIN = '2005';
+  let enteredPin = '';
+  
+  const dots = document.querySelectorAll('.passcode-dot');
+  const errorMsg = document.getElementById('passcode-error-msg');
+  const dotsRow = document.getElementById('passcode-dots-row');
+  
+  function updateDots() {
+    dots.forEach((dot, index) => {
+      if (index < enteredPin.length) {
+        dot.classList.add('active');
+      } else {
+        dot.classList.remove('active');
+      }
+    });
+  }
+  
+  function resetPasscodeUI() {
+    enteredPin = '';
+    updateDots();
+    errorMsg.classList.add('hidden');
+    dotsRow.classList.remove('shake');
+  }
+  
+  if (btnEnter && splashMain && splashPasscode) {
     btnEnter.addEventListener('click', () => {
-      splash.classList.add('fade-out');
+      splashMain.classList.add('hidden');
+      splashPasscode.classList.remove('hidden');
+      resetPasscodeUI();
+    });
+  }
+  
+  // Numeric keypad button events
+  document.querySelectorAll('.keypad-btn[data-value]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (enteredPin.length < 4) {
+        errorMsg.classList.add('hidden');
+        enteredPin += btn.getAttribute('data-value');
+        updateDots();
+        
+        if (enteredPin.length === 4) {
+          if (enteredPin === CORRECT_PIN) {
+            // Correct PIN -> unlock showroom and save session
+            sessionStorage.setItem('kavya_showroom_unlocked', 'true');
+            welcomeSplash.classList.add('fade-out');
+          } else {
+            // Incorrect PIN -> Shake indicators and alert
+            dotsRow.classList.add('shake');
+            errorMsg.classList.remove('hidden');
+            
+            setTimeout(() => {
+              enteredPin = '';
+              updateDots();
+              dotsRow.classList.remove('shake');
+            }, 600);
+          }
+        }
+      }
+    });
+  });
+  
+  // Keypad Backspace (⌫) event
+  const btnBackspace = document.getElementById('btn-keypad-backspace');
+  if (btnBackspace) {
+    btnBackspace.addEventListener('click', () => {
+      if (enteredPin.length > 0) {
+        enteredPin = enteredPin.slice(0, -1);
+        updateDots();
+        errorMsg.classList.add('hidden');
+      }
+    });
+  }
+  
+  // Keypad Cancel (✕) event
+  const btnCancelPin = document.getElementById('btn-keypad-cancel');
+  if (btnCancelPin) {
+    btnCancelPin.addEventListener('click', () => {
+      splashPasscode.classList.add('hidden');
+      splashMain.classList.remove('hidden');
+      resetPasscodeUI();
     });
   }
 

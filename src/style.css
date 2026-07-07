@@ -1819,5 +1819,115 @@ body {
   transform: translateY(-1px);
 }
 
+/* Passcode Lock Screen Styling */
+.passcode-title {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  color: var(--color-text-bright);
+  margin-bottom: 6px;
+}
+
+.passcode-subtitle {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-bottom: 25px;
+}
+
+.passcode-dots-row {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.passcode-dot {
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.passcode-dot.active {
+  background: var(--color-gold);
+  border-color: var(--color-gold);
+  box-shadow: 0 0 8px var(--color-gold-glow);
+  transform: scale(1.15);
+}
+
+.passcode-error-msg {
+  font-size: 0.78rem;
+  color: #e74c3c;
+  margin-bottom: 20px;
+  min-height: 16px;
+}
+
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 70px);
+  gap: 15px;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.keypad-btn {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--color-text-bright);
+  font-size: 1.4rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.keypad-btn:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+  transform: scale(1.05);
+}
+
+.keypad-btn:active {
+  transform: scale(0.95);
+  background: rgba(212, 175, 55, 0.3);
+}
+
+.keypad-btn.btn-action {
+  font-size: 1.1rem;
+  background: rgba(255, 255, 255, 0.01);
+  color: var(--color-text-muted);
+}
+
+.keypad-btn.btn-action:hover {
+  color: #ff4d4d;
+  background: rgba(255, 77, 77, 0.1);
+  border-color: rgba(255, 77, 77, 0.2);
+}
+
+#btn-keypad-backspace:hover {
+  color: var(--color-gold);
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--color-gold);
+}
+
+/* Shake Animation for incorrect passcode input */
+.passcode-dots-row.shake {
+  animation: shakeDots 0.4s ease-in-out;
+}
+
+@keyframes shakeDots {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+
 
 
