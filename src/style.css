@@ -1966,6 +1966,11 @@ body {
   color: var(--color-gold) !important;
 }
 
+/* Global Hidden Utility Class */
+.hidden {
+  display: none !important;
+}
+
 
 
 
