@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kavya Swarnalayam | Virtual Try-On Showroom</title>
+    <meta name="description" content="Try on high-end necklaces, earrings, and rings virtually in real-time. Experience luxury gold, diamonds, and gemstones using your webcam." />
+    
+    <!-- Google Fonts for Luxury Aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  </head>
+  <body>
+
+    <!-- Welcome Splash Screen Overlay -->
+    <div id="welcome-splash" class="welcome-splash">
+      <div class="splash-content">
+        <div class="splash-logo">
+          <span class="splash-logo-sparkle">✦</span>
+          <span class="splash-logo-sparkle main-sparkle">✦</span>
+          <span class="splash-logo-sparkle">✦</span>
+        </div>
+        <h1 class="splash-brand-title">Kavya Swarnalayam</h1>
+        <p class="splash-brand-subtitle">VIRTUAL TRY-ON SHOWROOM</p>
+        
+        <div class="splash-divider"></div>
+        
+        <p class="splash-quote">
+          "Adorn yourself in virtual splendor. Try on our finest necklaces, earrings, and rings instantly from home."
+        </p>
+        
+        <button id="btn-enter-showroom" class="btn btn-primary btn-enter-showroom">
+          Enter Virtual Showroom
+        </button>
+      </div>
+    </div>
+
+    <div id="app" class="app-container">
+      
+      <!-- Main Header -->
+      <header class="main-header">
+        <div class="logo-area">
+          <span class="logo-sparkle">✦</span>
+          <h1 class="brand-title">Kavya Swarnalayam</h1>
+          <span class="logo-sparkle">✦</span>
+        </div>
+        <p class="brand-subtitle">VIRTUAL TRY-ON SHOWROOM</p>
+      </header>
+
+      <!-- App Content Grid -->
+      <main class="app-main">
+        
+        <!-- Left Column: Camera Viewport -->
+        <section class="viewport-section">
+          <!-- Try-On Mode Selectors (Webcam vs Friend's Photo) -->
+          <div class="tryon-mode-tabs">
+            <button class="mode-tab-btn active" data-mode="webcam">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              Live Camera
+            </button>
+            <button class="mode-tab-btn" data-mode="photo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Try on Someone Else's Photo
+            </button>
+          </div>
+
+          <div class="canvas-wrapper">
+            <!-- Hidden Video Feed (processed by canvas) -->
+            <video id="webcam" autoplay playsinline muted></video>
+            
+            <!-- Canvas Overlay (draws mirrored stream and tracked jewellery) -->
+            <canvas id="canvas"></canvas>
+            
+            <!-- Tracking Active Indicator -->
+            <div id="tracking-indicator" class="tracking-indicator inactive">
+              <span class="indicator-dot"></span>
+              <span id="tracking-status-text">No face/hand detected</span>
+            </div>
+
+            <!-- Loader Overlay -->
+            <div id="loader" class="loader-overlay">
+              <div class="loader-spinner"></div>
+              <h3 class="loader-title">Initializing Aura Engine</h3>
+              <p id="loader-progress" class="loader-progress-text">Requesting camera access...</p>
+              <div class="progress-bar-container">
+                <div id="loader-bar" class="progress-bar" style="width: 10%;"></div>
+              </div>
+            </div>
+
+            <!-- Friend Photo Upload Overlay -->
+            <div id="friend-photo-overlay" class="friend-upload-overlay hidden">
+              <div class="friend-upload-box">
+                <span class="friend-upload-icon">👤</span>
+                <h4>Try on Another Person's Photo</h4>
+                <p>Upload a clear, front-facing portrait (face or hand) of your friend or family member to check the fit.</p>
+                <button id="btn-select-friend-photo" class="btn btn-primary btn-small">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Select Photo
+                </button>
+                <input type="file" id="friend-photo-input" accept="image/png, image/jpeg, image/jpg" style="display: none;">
+              </div>
+            </div>
+            
+            <!-- Capture Quick Control Overlay -->
+            <div class="viewport-controls">
+              <button id="btn-change-friend-photo" class="btn btn-secondary hidden" title="Upload another person's photo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Change Photo
+              </button>
+              <button id="btn-snapshot" class="btn btn-primary btn-capture" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                Capture Try-On
+              </button>
+              <button id="btn-reset" class="btn btn-secondary btn-icon-only" title="Reset Adjustments" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Collapsible Snapshot Gallery -->
+          <div class="snapshot-gallery-section">
+            <h4 class="gallery-title">Your Showroom Snapshots</h4>
+            <div id="snapshot-list" class="snapshot-list">
+              <div class="gallery-empty-state">Snapshots you capture will appear here. Try on some items and take a picture!</div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Right Column: Glassmorphic E-commerce Panel -->
+        <section class="control-panel-section">
+          
+          <!-- Category Selector Tabs -->
+          <div class="category-tabs">
+            <button class="tab-btn active" data-category="necklaces">
+              <span class="tab-icon">✨</span> Necklaces
+            </button>
+            <button class="tab-btn" data-category="earrings">
+              <span class="tab-icon">💎</span> Earrings
+            </button>
+            <button class="tab-btn" data-category="rings">
+              <span class="tab-icon">💍</span> Rings
+            </button>
+          </div>
+          
+          <!-- Try-On from Any Website Panel -->
+          <div class="external-tryon-container">
+            <h4 class="external-tryon-title">Try-On from Any Web Shop</h4>
+            <p class="external-tryon-subtitle">Browse online shops, copy an image address, and try it on here!</p>
+            
+            <div class="external-shop-links">
+              <a href="https://www.tanishq.co.in" target="_blank" class="shop-link-tag" title="Browse Tanishq in a new tab">Tanishq ↗</a>
+              <a href="https://www.caratlane.com" target="_blank" class="shop-link-tag" title="Browse CaratLane in a new tab">CaratLane ↗</a>
+              <a href="https://www.bluestone.com" target="_blank" class="shop-link-tag" title="Browse BlueStone in a new tab">BlueStone ↗</a>
+              <a href="https://www.kalyanjewellers.net" target="_blank" class="shop-link-tag" title="Browse Kalyan Jewellers in a new tab">Kalyan ↗</a>
+            </div>
+            
+            <form id="url-tryon-form" class="url-tryon-form">
+              <div class="url-input-row">
+                <input type="url" id="external-image-url" placeholder="Paste jewelry image link (URL)..." required class="luxury-input url-input">
+                <select id="external-image-category" class="luxury-select url-category-select">
+                  <option value="necklaces">Necklace</option>
+                  <option value="earrings">Earrings</option>
+                  <option value="rings">Ring</option>
+                </select>
+              </div>
+              <button type="submit" id="btn-url-tryon" class="btn btn-primary btn-small btn-full-width" style="margin-top: 10px;">
+                Fetch & Try On
+              </button>
+            </form>
+            <div id="url-tryon-status" class="url-tryon-status hidden"></div>
+          </div>
+
+          <!-- Catalog List Container -->
+          <div class="catalog-container">
+            <div class="catalog-header-row">
+              <h3 class="catalog-section-title">Select an exquisite piece</h3>
+              <button id="btn-open-upload" class="btn btn-secondary btn-small">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Upload
+              </button>
+            </div>
+            <div class="search-filter-wrapper">
+              <!-- Search bar and Filters Toggle -->
+              <div class="search-bar-row">
+                <div class="search-input-container">
+                  <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input type="text" id="catalog-search" placeholder="Search name, grams, material..." class="luxury-input search-input">
+                </div>
+                
+                <button id="btn-toggle-filters" class="btn btn-secondary btn-small filter-toggle-btn" title="Filter & Sort">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                  Filters
+                </button>
+              </div>
+              
+              <!-- Collapsible Filters & Sorting Drawer -->
+              <div id="filter-drawer" class="filter-drawer hidden">
+                <div class="filter-drawer-grid">
+                  <!-- Price Range Filter -->
+                  <div class="filter-group-mini">
+                    <label for="filter-price">Price</label>
+                    <select id="filter-price" class="luxury-select select-mini">
+                      <option value="all">All Prices</option>
+                      <option value="under-150000">Under ₹1,50,000</option>
+                      <option value="150000-350000">₹1,50,000 - ₹3,50,000</option>
+                      <option value="above-350000">Above ₹3,50,000</option>
+                    </select>
+                  </div>
+                  
+                  <!-- Weight Range Filter -->
+                  <div class="filter-group-mini">
+                    <label for="filter-weight">Weight</label>
+                    <select id="filter-weight" class="luxury-select select-mini">
+                      <option value="all">All Weights</option>
+                      <option value="light">Light (&lt; 10g)</option>
+                      <option value="medium">Medium (10g - 30g)</option>
+                      <option value="heavy">Heavy (&gt; 30g)</option>
+                    </select>
+                  </div>
+                  
+                  <!-- Origin (Preloaded vs Custom Uploads) -->
+                  <div class="filter-group-mini">
+                    <label for="filter-origin">Collection</label>
+                    <select id="filter-origin" class="luxury-select select-mini">
+                      <option value="all">All Items</option>
+                      <option value="preloaded">Aura Originals</option>
+                      <option value="custom">My Uploads</option>
+                    </select>
+                  </div>
+                  
+                  <!-- Sort Option -->
+                  <div class="filter-group-mini">
+                    <label for="sort-by">Sort By</label>
+                    <select id="sort-by" class="luxury-select select-mini">
+                      <option value="featured">Featured</option>
+                      <option value="price-asc">Price: Low to High</option>
+                      <option value="price-desc">Price: High to Low</option>
+                      <option value="weight-asc">Weight: Light to Heavy</option>
+                      <option value="weight-desc">Weight: Heavy to Light</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="catalog-grid" class="catalog-grid">
+              <!-- Catalog items dynamically populated by main.js -->
+            </div>
+          </div>
+          
+          <!-- Active Try-On Set Panel -->
+          <div id="tryon-set-container" class="tryon-set-container">
+            <h4 class="tryon-set-title">Active Try-On Set</h4>
+            <div id="tryon-set-list" class="tryon-set-list">
+              <div class="tryon-set-item-slot" id="slot-necklaces" data-category="necklaces">
+                <div class="slot-meta">
+                  <span class="slot-label">Necklace</span>
+                  <span class="slot-value empty">None Selected</span>
+                </div>
+                <button class="btn-remove-slot hidden" data-category="necklaces" title="Remove necklace from try-on">✕</button>
+              </div>
+              <div class="tryon-set-item-slot" id="slot-earrings" data-category="earrings">
+                <div class="slot-meta">
+                  <span class="slot-label">Earrings</span>
+                  <span class="slot-value empty">None Selected</span>
+                </div>
+                <button class="btn-remove-slot hidden" data-category="earrings" title="Remove earrings from try-on">✕</button>
+              </div>
+              <div class="tryon-set-item-slot" id="slot-rings" data-category="rings">
+                <div class="slot-meta">
+                  <span class="slot-label">Ring</span>
+                  <span class="slot-value empty">None Selected</span>
+                </div>
+                <button class="btn-remove-slot hidden" data-category="rings" title="Remove ring from try-on">✕</button>
+              </div>
+            </div>
+            <button id="btn-clear-set" class="btn btn-secondary btn-small btn-full-width" style="margin-top: 10px;" disabled>
+              Clear Try-On Set
+            </button>
+          </div>
+
+          <!-- Try-On Calibration / Sliders -->
+          <div class="calibration-container">
+            <h4 class="calibration-title">Perfect Fit Calibration</h4>
+            <p class="calibration-subtitle">Adjust positioning and scaling to fit your camera view perfectly</p>
+            
+            <div class="slider-group">
+              <div class="slider-label-row">
+                <span>Scale</span>
+                <span id="val-scale">1.0x</span>
+              </div>
+              <input type="range" id="slider-scale" min="0.3" max="2.5" step="0.01" value="1.0" class="luxury-range" disabled>
+            </div>
+            
+            <div class="slider-row">
+              <div class="slider-group">
+                <div class="slider-label-row">
+                  <span>Horizontal Offset</span>
+                  <span id="val-offset-x">0px</span>
+                </div>
+                <input type="range" id="slider-offset-x" min="-150" max="150" step="1" value="0" class="luxury-range" disabled>
+              </div>
+              
+              <div class="slider-group">
+                <div class="slider-label-row">
+                  <span>Vertical Offset</span>
+                  <span id="val-offset-y">0px</span>
+                </div>
+                <input type="range" id="slider-offset-y" min="-150" max="150" step="1" value="0" class="luxury-range" disabled>
+              </div>
+            </div>
+            
+            <div class="slider-group">
+              <div class="slider-label-row">
+                <span>Rotation Angle</span>
+                <span id="val-rotation">0°</span>
+              </div>
+              <input type="range" id="slider-rotation" min="-180" max="180" step="1" value="0" class="luxury-range" disabled>
+            </div>
+            
+            <!-- Earring Split Toggle (Visible only when adjusting earrings) -->
+            <div id="earring-split-group" class="slider-group hidden" style="margin-top: 15px;">
+              <label class="luxury-checkbox-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; color: var(--color-text-bright);">
+                <input type="checkbox" id="chk-earring-split" checked style="accent-color: var(--color-gold); width: 16px; height: 16px;">
+                Split Earring Pair (Show single earring per ear)
+              </label>
+            </div>
+          </div>
+          
+          <!-- Selected Product Details & Add to Cart -->
+          <div id="product-details-card" class="product-details-card hidden">
+            <div class="details-header">
+              <div>
+                <h4 id="detail-name" class="detail-name">Princess Cut Solitaire</h4>
+                <p id="detail-material" class="detail-material">Platinum, 1.5ct Diamond</p>
+              </div>
+              <span id="detail-price" class="detail-price">$6,700</span>
+            </div>
+            <p id="detail-description" class="detail-description">
+              An exquisite, high-quality gemstone with luxury setting details. Made by top artisans.
+            </p>
+            <button id="btn-add-to-cart" class="btn btn-primary btn-full-width">
+              Purchase Piece
+            </button>
+          </div>
+          
+        </section>
+        
+      </main>
+      
+      <!-- Luxury Footer -->
+      <footer class="main-footer">
+        <p>© 2026 AURA Haute Joaillerie. All rights reserved. Driven by Advanced Vision tracking.</p>
+      </footer>
+      
+      <!-- Modal Overlay for uploading custom pieces -->
+      <div id="upload-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Upload Custom Jewelry</h3>
+            <button id="modal-close" class="modal-close-btn">✕</button>
+          </div>
+          
+          <form id="upload-form" class="upload-form">
+            <!-- Drag & Drop / File selector -->
+            <div id="drop-zone" class="drop-zone">
+              <input type="file" id="upload-file" accept="image/png, image/jpeg, image/jpg" required class="hidden-file-input">
+              <div class="drop-zone-prompt">
+                <span class="drop-icon">✦</span>
+                <p class="drop-text">Drag & drop your jewelry image here or <strong>browse</strong></p>
+                <p class="drop-subtext">Recommended: Transparent PNG (500x500px)</p>
+              </div>
+              <div id="file-preview-container" class="file-preview-container hidden">
+                <img id="file-preview-img" src="" alt="Preview">
+                <div class="file-preview-info">
+                  <span id="file-preview-name" class="file-preview-name">file_name.png</span>
+                  <button type="button" id="btn-remove-file" class="btn-remove-file">Remove</button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Background Removal Settings (visible when file is active) -->
+            <div id="bg-removal-settings" class="bg-removal-settings form-section hidden">
+              <div class="checkbox-group">
+                <input type="checkbox" id="upload-remove-bg" checked class="luxury-checkbox">
+                <label for="upload-remove-bg" class="checkbox-label">Auto-Remove Background Color</label>
+              </div>
+              
+              <div id="bg-removal-controls" class="bg-removal-controls">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="upload-bg-color-type">Key Color Type</label>
+                    <select id="upload-bg-color-type" class="luxury-select">
+                      <option value="auto">Auto Detect (Corners)</option>
+                      <option value="white">Pure White Background</option>
+                      <option value="black">Pure Black Background</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <div class="slider-label-row">
+                      <label for="upload-bg-tolerance">Tolerance</label>
+                      <span id="val-bg-tolerance" style="color: var(--color-gold); font-family: monospace; font-size: 0.8rem;">40</span>
+                    </div>
+                    <input type="range" id="upload-bg-tolerance" min="10" max="150" value="40" class="luxury-range">
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="upload-category">Category</label>
+              <select id="upload-category" required class="luxury-select">
+                <option value="necklaces">Necklaces</option>
+                <option value="earrings">Earrings</option>
+                <option value="rings">Rings</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="upload-name">Jewelry Name</label>
+              <input type="text" id="upload-name" placeholder="e.g. Victorian Ruby Choker" required class="luxury-input">
+            </div>
+            
+            <div class="form-group">
+              <label for="upload-weight">Weight in Grams (Optional)</label>
+              <input type="number" id="upload-weight" placeholder="e.g. 24" min="0.1" step="0.1" class="luxury-input">
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="upload-price">Price in ₹ (Optional)</label>
+                <input type="text" id="upload-price" placeholder="e.g. ₹2,50,000" class="luxury-input">
+              </div>
+              
+              <div class="form-group">
+                <label for="upload-material">Material (Optional)</label>
+                <input type="text" id="upload-material" placeholder="e.g. 18K White Gold" class="luxury-input">
+              </div>
+            </div>
+            
+            <div class="modal-footer">
+              <button type="button" id="btn-cancel-upload" class="btn btn-secondary">Cancel</button>
+              <button type="submit" id="btn-submit-upload" class="btn btn-primary">Add to Showroom</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
