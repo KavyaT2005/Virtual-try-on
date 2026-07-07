@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const welcome = document.getElementById('welcome-splash');
     if (welcome) welcome.classList.add('fade-out');
   } else {
-    // Run Stage 1 Intro Timer: Transition from Brand name to Admin Login after 2.5 seconds
+    // Run Stage 1 Intro Timer: Transition from Brand name to Admin Login after 5 seconds
     setTimeout(() => {
       const intro = document.getElementById('splash-intro-content');
       const login = document.getElementById('splash-login-content');
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         intro.classList.add('hidden');
         login.classList.remove('hidden');
       }
-    }, 2500);
+    }, 5000);
   }
   
   renderCatalog();
